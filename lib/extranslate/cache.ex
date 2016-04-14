@@ -14,5 +14,15 @@ defmodule Extranslate.Cache do
       Map.put_new cache, key, value
     end)
   end
+
+  def generate_key(key, bindings) do
+    items = bindings
+      |> Enum.reduce([], fn({k, v}, acc) ->
+        acc ++ [to_string(k), v]
+      end)
+
+    :crypto.hash(:sha256, [key] ++ items)
+    |> Base.encode16
+  end
 end
 
